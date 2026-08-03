@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPS Test</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            background: #1e293b;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 400px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #38bdf8;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+        .stat-box {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 12px;
+            width: 45%;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #f8fafc;
+            margin-top: 5px;
+        }
+        #click-btn {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+            border: none;
+            border-radius: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+        }
+        #click-btn:active {
+            transform: scale(0.95);
+        }
+        #click-btn:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>CPS Test</h1>
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">время</div>
+                <div id="time" class="stat-value">5.0с</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">cps</div>
+                <div id="cps" class="stat-value">0.0</div>
+            </div>
+        </div>
+        <button id="click-btn">кликни чтобы начать!</button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('click-btn');
+        const timeDisplay = document.getElementById('time');
+        const cpsDisplay = document.getElementById('cps');
+
+        let testDuration = 5;
+        let timeLeft = testDuration;
+        let clicks = 0;
+        let timer = null;
+        let isPlaying = false;
+
+        btn.addEventListener('click', () => {
+            if (!isPlaying) {
+                if (timeLeft === 0) resetTest();
+                isPlaying = true;
+                btn.textContent = "жми!";
+                
+                timer = setInterval(() => {
+                    timeLeft -= 0.1;
+                    if (timeLeft <= 0) {
+                        timeLeft = 0;
+                        endTest();
+                    }
+                    timeDisplay.textContent = timeLeft.toFixed(1) + 'с';
+                    cpsDisplay.textContent = (clicks / (testDuration - timeLeft)).toFixed(1);
+                }, 100);
+            }
+
+            if (isPlaying) {
+                clicks++;
+                cpsDisplay.textContent = (clicks / (testDuration - timeLeft || 0.1)).toFixed(1);
+            }
+        });
+
+        function endTest() {
+            clearInterval(timer);
+            isPlaying = false;
+            btn.textContent = 'игра окончена! снова?';
+            let finalCps = (clicks / testDuration).toFixed(2);
+            cpsDisplay.textContent = finalCps;
+        }
+
+        function resetTest() {
+            timeLeft = testDuration;
+            clicks = 0;
+            timeDisplay.textContent = timeLeft.toFixed(1) + 'с';
+            cpsDisplay.textContent = '0.0';
+            btn.textContent = 'кликни чтобы начать!';
+        }
+    </script>
+</body>
+</html>
